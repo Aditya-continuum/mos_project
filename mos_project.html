@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shear Stress Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        output {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Shear Stress Calculator</h2>
+    <form id="shearStressForm">
+        <div>
+            <label for="E1">Material at Top - Young's Modulus:</label>
+            <input type="number" id="E1" required>
+        </div>
+        <div>
+            <label for="H1">Material at Top - Height:</label>
+            <input type="number" id="H1" required>
+        </div>
+        <div>
+            <label for="W1">Material at Top - Width:</label>
+            <input type="number" id="W1" required>
+        </div>
+        <div>
+            <label for="E2">Material at Bottom - Young's Modulus:</label>
+            <input type="number" id="E2" required>
+        </div>
+        <div>
+            <label for="H2">Material at Bottom - Height:</label>
+            <input type="number" id="H2" required>
+        </div>
+        <div>
+            <label for="W2">Material at Bottom - Width:</label>
+            <input type="number" id="W2" required>
+        </div>
+        <div>
+            <label for="M">Moment Acting on the Composite Material:</label>
+            <input type="number" id="M" required>
+        </div>
+        <button type="button" onclick="calculateShearStress()">Calculate Shear Stress</button>
+    </form>
+
+    <output id="result"></output>
+
+    <script>
+        function calculateShearStress() {
+            // Get input values
+            var E1 = parseFloat(document.getElementById('E1').value);
+            var H1 = parseFloat(document.getElementById('H1').value);
+            var W1 = parseFloat(document.getElementById('W1').value);
+            var E2 = parseFloat(document.getElementById('E2').value);
+            var H2 = parseFloat(document.getElementById('H2').value);
+            var W2 = parseFloat(document.getElementById('W2').value);
+            var M = parseFloat(document.getElementById('M').value);
+
+            // Calculate shear stress
+            var y1 = H2 + (H1 / 2);
+            var y2 = H2 / 2;
+            var A1 = H1 * W1;
+            var A2 = H2 * W2;
+            var n = E2 / E1;
+            var W_new = n * W2;
+            var N_A = ((A1 * y1) + (A2 * y2)) / (A1 + A2);
+            var d1 = y1 - N_A;
+            var d2 = N_A - y2;
+            var I1 = (W1 * H1 * H1 * H1) / 12;
+            var I2 = (W2 * H2 * H2 * H2) / 12;
+            var I = I1 + (A1 * d1 * d1) + I2 + (A2 * d2 * d2);
+            var y_max_2 = (H1 + H2 - N_A);
+            var y_max_1 = (N_A);
+            var Sigma_max_2 = (M * y_max_2) / I;
+            var Sigma_max_1 = (-n * M * y_max_1) / I;
+
+            // Display the result
+            var resultOutput = document.getElementById('result');
+            resultOutput.innerHTML = "The maximum shear stress that material 2 can handle is: " + Sigma_max_2.toFixed(2) +
+                "<br>The maximum shear stress that material 1 can handle is: " + Sigma_max_1.toFixed(2);
+        }
+    </script>
+</body>
+</html>
